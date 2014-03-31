@@ -1,0 +1,18 @@
+<canvas></canvas>
+
+<%= image_tag("nyan.png", id: "nyan", hidden: true) %>
+<%= image_tag("cateroids.png", id: "grump", hidden: true) %>
+<%= image_tag("ammo.png", id: "ammo", hidden: true) %>
+<%= image_tag("explosions/explosion-0.png", id: "explosion-0", hidden: true) %>
+<%= image_tag("explosions/explosion-1.png", id: "explosion-1", hidden: true) %>
+<%= image_tag("explosions/explosion-2.png", id: "explosion-2", hidden: true) %>
+<%= image_tag("explosions/explosion-3.png", id: "explosion-3", hidden: true) %>
+<%= image_tag("explosions/explosion-4.png", id: "explosion-4", hidden: true) %>
+<%= audio_tag("explosion.wav") %>
+<%= audio_tag("meow.m4a", id: "meow") %>
+<%= audio_tag("pewpew.wav") %>
+
+<script>
+  var canvas = document.getElementsByTagName("canvas")[0];
+  new Asteroids.Game(canvas).start();
+</script>
