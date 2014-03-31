@@ -13,7 +13,7 @@
  */
 
 canvas {
-  background:url('background.png');
+  background: image-url('background.png');
 }
 
 html, body {
@@ -24,7 +24,7 @@ html, body {
 
 @font-face {
   font-family: 'Atari';
-  src: url('PressStart2P.ttf');
+  src: asset-url('PressStart2P.ttf');
 }
 
 #meow { display: none }
