@@ -12,6 +12,7 @@ gem 'turbolinks'
 gem 'jbuilder', '~> 1.2'
 
 gem 'rails_12factor'
+gem 'rails_serve_static_assets'
 
 group :doc do
   gem 'sdoc', require: false
