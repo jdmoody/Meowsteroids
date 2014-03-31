@@ -1,4 +1,4 @@
-# Meowsteroids
+# [Meowsteroids](http://meowsteroids.herokuapp.com/)
 
 ## Description
 Meowsteroids is an retro asteroids arcade game run in the browser using JS and HTML5 canvas. 
