@@ -41,7 +41,7 @@
       var bullet = new Asteroids.Bullet(this.pos, this.direction);
       this.bullets.push(bullet);
       var laser = new Audio("audios/pewpew.wav");
-      laser.volume = 0.2;
+      laser.volume = 0.05;
       laser.play();
     }
   };

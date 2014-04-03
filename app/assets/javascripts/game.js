@@ -14,6 +14,13 @@
     this.timer = Date.now();
     this.points = 0;
     this.level = 0;
+    this.muted = false
+    game = this;
+    $('body').on('keydown', function(event) {
+      if (event.keyCode == 77) {
+        game.muteGame();
+      }
+    });
   };
 
   Game.FPS = 16;
@@ -81,6 +88,7 @@
       if (this.asteroids[i].delete === true) {
         this.points++;
         var boom = new Audio("audios/explosion.wav");
+        boom.volume = 0.20;
         boom.play();
         var oldAst = this.asteroids.splice(i, 1)[0];
         oldAst.makeBabies(this);
@@ -132,13 +140,38 @@
     ctx.fillStyle = "black";
     ctx.font = '25px Atari';
     ctx.fillText(seconds, 5, 30); 
-  }
+  };
   
   Game.prototype.showPoints = function(ctx) {
     ctx.fillStyle = "black";
     ctx.font = '25 px Atari';
     ctx.fillText("Points:" + this.points, 5, Game.DIM_Y - 5)
-  }
+  };
+  
+  Game.prototype.showMute = function (ctx) {
+    ctx.fillStyle = "black";
+    ctx.font = '25 px Atari';
+    
+    if (this.muted) {
+      ctx.fillText("Un(m)ute", Game.DIM_X - 200, 30);
+      ctx.fillText("Music", Game.DIM_X - 150, 60);
+    } else {
+      ctx.fillText("(M)ute", Game.DIM_X - 175, 30);
+      ctx.fillText("Music", Game.DIM_X - 150, 60);
+    }
+  };
+  
+  Game.prototype.muteGame = function () {
+    var game = this;
+    $('audio').each(function() {
+      if (game.muted) {
+        this.muted = false;
+      } else {
+        this.muted = true;
+      }
+    });
+    this.muted = !this.muted;
+  };
   
   Game.prototype.incrementLevel = function() {
     if (this.asteroids.length === 0) {
@@ -155,18 +188,20 @@
     this.incrementLevel();
     this.showTime(ctx);
     this.showPoints(ctx);
+    this.showMute(ctx);
     this.checkCollisions();
     this.checkKeys();
   };
   
   Game.prototype.startMeow = function() {
     this.meow = document.getElementById("meow");
+    this.meow.volume = 0.25;
     this.meow.play();
   };
 
   Game.prototype.start = function(canvasEl) {
-
     var ctx = this.ctx
+    ctx.fillText("Music", Game.DIM_X - 200, 60);
     var game = this;
     this.game_timer = window.setInterval(function () {
       game.step(ctx);
