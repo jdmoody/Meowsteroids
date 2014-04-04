@@ -119,7 +119,7 @@
   
   Game.prototype.activatePowerup = function () {
     var game = this;
-    var bloop = new Audio("assets/bloop.wav");
+    var bloop = new Audio("audios/bloop.wav");
     bloop.play();
     this.ship.hyperBullets = true;
     setTimeout(function () {
