@@ -60,6 +60,10 @@
         key('enter', function() { game.restart(); });
       }
     };
+    if (this.powerup && this.ship.isCollidedWith(this.powerup)) {
+      this.activatePowerup();
+      this.powerup = null;
+    }
   };
   
   Game.prototype.deathMessage = function() {
@@ -104,6 +108,24 @@
       }
     }
   };
+  
+  Game.prototype.addPowerup = function () {
+    if (((Math.floor((Date.now() - this.timer) / 1000)) % 60 == 0 || 
+        this.points % 25 == 0) &&
+        !this.powerup) {
+      this.powerup = new Asteroids.Powerup(Game.DIM_X, Game.DIM_Y);
+    }
+  };
+  
+  Game.prototype.activatePowerup = function () {
+    var game = this;
+    var bloop = new Audio("assets/bloop.wav");
+    bloop.play();
+    this.ship.hyperBullets = true;
+    setTimeout(function () {
+      game.ship.hyperBullets = false;
+    }, 5000);
+  };
 
   Game.prototype.draw = function(ctx) {
     ctx.clearRect(0, 0, Game.DIM_X, Game.DIM_Y);
@@ -111,7 +133,9 @@
     this.asteroids.forEach(function (asteroid) {
       asteroid.draw(ctx);
       
-      if (asteroid.explosion) {asteroid.explosion.draw(ctx);}
+      if (asteroid.explosion) {
+        asteroid.explosion.draw(ctx);
+      }
     });
 
     this.ship.bullets.forEach( function(bullet){
@@ -119,6 +143,10 @@
     });
 
     this.ship.draw(ctx);
+    
+    if (this.powerup) {
+      this.powerup.draw(ctx);
+    }
   };
 
   Game.prototype.move = function() {
@@ -189,6 +217,7 @@
     this.showTime(ctx);
     this.showPoints(ctx);
     this.showMute(ctx);
+    this.addPowerup();
     this.checkCollisions();
     this.checkKeys();
   };

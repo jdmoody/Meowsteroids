@@ -19,5 +19,6 @@
 //= require ship
 //= require bullet
 //= require explosion
+//= require powerup
 //= require game
 //= require_tree .
