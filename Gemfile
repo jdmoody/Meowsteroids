@@ -16,6 +16,10 @@ gem 'rails_serve_static_assets'
 gem 'newrelic_rpm'
 gem 'figaro'
 
+group :development do
+  gem 'annotate'
+end
+
 group :doc do
   gem 'sdoc', require: false
 end
