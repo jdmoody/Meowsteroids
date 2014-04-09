@@ -58,6 +58,17 @@
         this.meow.currentTime = 0;
         var game = this;
         key('enter', function() { game.restart(); });
+        $.ajax({
+          type: "GET",
+          dataType: "json",
+          url: "/highscores/",
+          success: function (data) {
+           data.forEach(function(score) {
+              console.log(score.initials);
+              console.log(score.score);
+            })
+          }
+        });
       }
     };
     if (this.powerup && this.ship.isCollidedWith(this.powerup)) {
