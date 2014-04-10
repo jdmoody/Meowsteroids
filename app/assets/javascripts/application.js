@@ -14,6 +14,7 @@
 //= require jquery_ujs
 //= require turbolinks
 //= require keymaster
+//= require CanvasInput.min
 //= require moving_object
 //= require asteroid
 //= require ship

@@ -42,9 +42,9 @@
 
   Game.prototype.checkKeys = function() {
     var my_game = this;
-    if(key.isPressed("up")) this.ship.power(0.25);
-    if(key.isPressed("left")) this.ship.turn(-1);
-    if(key.isPressed("right")) this.ship.turn(1);
+    if(key.isPressed("up")) this.ship.power(0.15);
+    if(key.isPressed("left")) this.ship.turn(-0.5);
+    if(key.isPressed("right")) this.ship.turn(0.5);
     if(key.isPressed("space")) this.ship.fireBullet();
   }
 
@@ -68,6 +68,23 @@
               console.log(score.score);
             })
           }
+        });
+        var input = new CanvasInput({
+          canvas: document.getElementById('canvas'),
+          fontSize: 16,
+          fontFamily: 'Atari',
+          fontColor: '#212121',
+          maxlength: 3,
+          width: 75,
+          borderRadius: 3,
+          boxShadow: '1px 1px 0px #fff',
+          innerShadow: '0px 0px 5px rgba(0, 0, 0, 0.5)',
+          placeHolder: '___'
+        });
+        input.render();
+        input.focus();
+        input.onsubmit(function () {
+          console.log(input.value());
         });
       }
     };
