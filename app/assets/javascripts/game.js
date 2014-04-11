@@ -52,39 +52,19 @@
     for(var i = 0; i < this.asteroids.length; i++){
       if (this.ship.isCollidedWith(this.asteroids[i])) {
         this.timer = Date.now() - this.timer;
-        this.deathMessage();
         this.stop();
         this.meow.pause();
         this.meow.currentTime = 0;
         var game = this;
         key('enter', function() { game.restart(); });
+        var highscores;
         $.ajax({
           type: "GET",
           dataType: "json",
           url: "/highscores/",
           success: function (data) {
-           data.forEach(function(score) {
-              console.log(score.initials);
-              console.log(score.score);
-            })
+            game.handleScores(data);
           }
-        });
-        var input = new CanvasInput({
-          canvas: document.getElementById('canvas'),
-          fontSize: 16,
-          fontFamily: 'Atari',
-          fontColor: '#212121',
-          maxlength: 3,
-          width: 75,
-          borderRadius: 3,
-          boxShadow: '1px 1px 0px #fff',
-          innerShadow: '0px 0px 5px rgba(0, 0, 0, 0.5)',
-          placeHolder: '___'
-        });
-        input.render();
-        input.focus();
-        input.onsubmit(function () {
-          console.log(input.value());
         });
       }
     };
@@ -94,12 +74,51 @@
     }
   };
   
-  Game.prototype.deathMessage = function() {
-    var death = "You've been overwhelmed by grumpiness!"
+  Game.prototype.handleScores = function(scores) {
+    var game = this;
+    scores.forEach(function(score) {
+      console.log(score.initials);
+      console.log(score.score);
+    });
+    
+    keys = Object.keys(scores);
+    keys.sort();
+    if (keys[keys.length - 1] < this.points) {
+      var input = new CanvasInput({
+        canvas: document.getElementById('canvas'),
+        fontSize: 16,
+        fontFamily: 'Atari',
+        fontColor: '#212121',
+        maxlength: 3,
+        width: 75,
+        borderRadius: 3,
+        boxShadow: '1px 1px 0px #fff',
+        innerShadow: '0px 0px 5px rgba(0, 0, 0, 0.5)',
+        placeHolder: '___'
+      });
+      input.render();
+      input.focus();
+      input.onsubmit(function () {
+        $.ajax({
+          url: "/highscores/",
+          type: "POST",
+          data: {
+            initials: input.value(),
+            score: game.points
+          }
+        });
+      });
+      this.deathMessage("You got a high score of " + this.points + "! Congrats!");
+    } else {
+      this.deathMessage("You've been overwhelmed by grumpiness!");
+    }
+  };
+  
+  Game.prototype.deathMessage = function(msg) {
     var tryAgain = "(Press Enter to try again)";
     this.ctx.fillStyle = "black";
     this.ctx.font = '16px Atari';
-    this.ctx.fillText(death, Game.DIM_X/2 - 325, Game.DIM_Y/2);
+    this.ctx.fillText(msg, Game.DIM_X/2 - 325, Game.DIM_Y/2);
     this.ctx.fillText(tryAgain, Game.DIM_X/2 - 250, Game.DIM_Y/2 + 25) 
   }
   

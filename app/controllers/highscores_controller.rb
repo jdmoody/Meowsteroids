@@ -3,4 +3,9 @@ class HighscoresController < ApplicationController
     @highscores = Highscore.all
     render json: @highscores
   end
+  
+  def create
+    Highscore.create(initials: params[:initials], score: params[:score])
+    head :ok
+  end
 end
