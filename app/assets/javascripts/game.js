@@ -43,8 +43,8 @@
   Game.prototype.checkKeys = function() {
     var my_game = this;
     if(key.isPressed("up")) this.ship.power(0.15);
-    if(key.isPressed("left")) this.ship.turn(-0.5);
-    if(key.isPressed("right")) this.ship.turn(0.5);
+    if(key.isPressed("left")) this.ship.turn(-0.75);
+    if(key.isPressed("right")) this.ship.turn(0.75);
     if(key.isPressed("space")) this.ship.fireBullet();
   }
 
@@ -76,42 +76,26 @@
   
   Game.prototype.handleScores = function(scores) {
     var game = this;
+    
     scores.forEach(function(score) {
       console.log(score.initials);
       console.log(score.score);
     });
     
-    keys = Object.keys(scores);
-    keys.sort();
-    if (keys[keys.length - 1] < this.points) {
-      var input = new CanvasInput({
-        canvas: document.getElementById('canvas'),
-        fontSize: 16,
-        fontFamily: 'Atari',
-        fontColor: '#212121',
-        maxlength: 3,
-        width: 75,
-        borderRadius: 3,
-        boxShadow: '1px 1px 0px #fff',
-        innerShadow: '0px 0px 5px rgba(0, 0, 0, 0.5)',
-        placeHolder: '___'
-      });
-      input.render();
-      input.focus();
-      input.onsubmit(function () {
-        $.ajax({
-          url: "/highscores/",
-          type: "POST",
-          data: {
-            initials: input.value(),
-            score: game.points
-          }
-        });
-      });
-      this.deathMessage("You got a high score of " + this.points + "! Congrats!");
-    } else {
-      this.deathMessage("You've been overwhelmed by grumpiness!");
-    }
+    debugger
+    
+    // $.ajax({
+    //   url: "/highscores/",
+    //   type: "POST",
+    //   data: {
+    //     initials: input.value(),
+    //     score: game.points
+    //   },
+    //   complete: function () {
+    //     
+    //   }
+    
+    this.deathMessage("You've been overwhelmed by grumpiness!");
   };
   
   Game.prototype.deathMessage = function(msg) {
