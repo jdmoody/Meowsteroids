@@ -63,7 +63,8 @@
           dataType: "json",
           url: "/highscores/",
           success: function (data) {
-            game.handleScores(data);
+            game.highScores = data;
+            game.handleScores().bind(game);
           }
         });
       }
@@ -74,15 +75,17 @@
     }
   };
   
-  Game.prototype.handleScores = function(scores) {
+  Game.prototype.handleScores = function() {
     var game = this;
     
-    scores.forEach(function(score) {
+    this.highScores.forEach(function(score) {
       console.log(score.initials);
       console.log(score.score);
     });
     
-    debugger
+    if (this.isHighScore()) {
+      console.log("You got a high score!");
+    }
     
     // $.ajax({
     //   url: "/highscores/",
@@ -96,6 +99,15 @@
     //   }
     
     this.deathMessage("You've been overwhelmed by grumpiness!");
+  };
+  
+  Game.prototype.isHighScore = function() {
+    if (this.highScores.length < 10 && this.points > 0) {
+      return true;
+    } else if (this.points > this.highScores[this.highScores.length - 1].score) {
+      return true;
+    }
+    return false;
   };
   
   Game.prototype.deathMessage = function(msg) {
