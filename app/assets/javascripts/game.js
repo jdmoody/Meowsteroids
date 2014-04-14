@@ -56,6 +56,7 @@
         this.meow.pause();
         this.meow.currentTime = 0;
         var game = this;
+        this.userInput = '';
         key('enter', function() { game.restart(); });
         var highscores;
         $.ajax({
@@ -64,7 +65,7 @@
           url: "/highscores/",
           success: function (data) {
             game.highScores = data;
-            game.handleScores().bind(game);
+            game.handleScores();
           }
         });
       }
@@ -84,7 +85,14 @@
     });
     
     if (this.isHighScore()) {
-      console.log("You got a high score!");
+      this.deathMessage("You got a high score!");
+      key('a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z,backspace',
+           function(event, handler) {
+             event.preventDefault();
+             game.inputInitial(handler.shortcut);
+      });
+    } else {
+      this.deathMessage("You've been overwhelmed by grumpiness!");
     }
     
     // $.ajax({
@@ -98,7 +106,29 @@
     //     
     //   }
     
-    this.deathMessage("You've been overwhelmed by grumpiness!");
+    
+  };
+  
+  Game.prototype.inputInitial = function (keyPressed) {
+    if (keyPressed === 'backspace' && this.userInput.length > 0) {
+      this.userInput = this.userInput.substring(0, this.userInput.length - 1);
+    } else if (keyPressed !== 'backspace' && this.userInput.length < 3) {
+      this.userInput += keyPressed.toUpperCase();
+    }
+    
+    this.drawInitials();
+  };
+  
+  Game.prototype.drawInitials = function () {
+    var inputText = '';
+    for (var i = 0; i < 3; i++) {
+      inputText += (this.userInput[i]) ? this.userInput[i] : '_';
+      inputText += (i !== 2) ? ' ' : '';
+    }
+    this.ctx.fillStyle = "#FFFFFF"
+    this.ctx.fillRect(Game.DIM_X/2, Game.DIM_Y/2 + 155, 100, 50)
+    this.ctx.fillStyle = "#111111"
+    this.ctx.fillText(inputText, Game.DIM_X/2, Game.DIM_Y/2 + 180);
   };
   
   Game.prototype.isHighScore = function() {
