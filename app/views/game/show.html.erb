@@ -1,3 +1,4 @@
+<div style="font-family: Atari;">
 <canvas id="canvas"></canvas>
 
 <%= image_tag("nyan.png", id: "nyan", hidden: true) %>
@@ -15,6 +16,6 @@
 <%= audio_tag("pewpew.wav") %>
 
 <script>
-  var canvas = document.getElementsByTagName("canvas")[0];
-  new Asteroids.Game(canvas).start();
+  new Asteroids.Game(canvas).run();
 </script>
+</div>

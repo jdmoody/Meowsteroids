@@ -246,13 +246,13 @@
   
   Game.prototype.showPoints = function(ctx) {
     ctx.fillStyle = "black";
-    ctx.font = '25 px Atari';
+    ctx.font = '25px Atari';
     ctx.fillText("Points:" + this.points, 5, Game.DIM_Y - 5)
   };
   
   Game.prototype.showMute = function (ctx) {
     ctx.fillStyle = "black";
-    ctx.font = '25 px Atari';
+    ctx.font = '25px Atari';
     
     if (this.muted) {
       ctx.fillText("Un(m)ute", Game.DIM_X - 200, 30);
@@ -301,8 +301,31 @@
     this.meow.volume = 0.25;
     this.meow.play();
   };
+  
+  Game.prototype.run = function() {
+    var game = this;
+    
+    window.onload = function () {
+      game.ctx.fillStyle = "rgba(255, 255, 255, 0.75)";
+      game.ctx.fillRect(Game.DIM_X/2 - 400, Game.DIM_Y/2 - 100, 740, 200);
+      game.ctx.fillStyle = "black";
+      game.ctx.font = '25px Atari';
+      game.ctx.fillText("Welcome to Meowsteroids!", Game.DIM_X/2 - 325, Game.DIM_Y/2);
+      game.ctx.fillText("Press Enter to Play", Game.DIM_X/2 - 270, Game.DIM_Y/2 + 40);
+      // game.demo();
+      key('enter', function() { 
+        game.start(); 
+        // game.stopDemo();
+      });
+    }
+  };
+  
+  Game.prototype.demo = function () {
+    
+  }
 
-  Game.prototype.start = function(canvasEl) {
+  Game.prototype.start = function() {
+    key.unbind('enter');
     var ctx = this.ctx
     ctx.fillText("Music", Game.DIM_X - 200, 60);
     var game = this;
