@@ -79,13 +79,9 @@
   Game.prototype.handleScores = function() {
     var game = this;
     
-    this.highScores.forEach(function(score) {
-      console.log(score.initials);
-      console.log(score.score);
-    });
-    
     if (this.isHighScore()) {
       this.deathMessage("You got a high score!");
+      key.unbind('a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z,backspace');
       key('a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z,backspace',
            function(event, handler) {
              event.preventDefault();
