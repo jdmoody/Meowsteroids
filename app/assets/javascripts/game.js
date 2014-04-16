@@ -16,11 +16,11 @@
     this.level = 0;
     this.muted = false
     game = this;
-    $('body').on('keydown', function(event) {
-      if (event.keyCode == 77) {
-        game.muteGame();
-      }
-    });
+    // $('body').on('keydown', function(event) {
+    //   if (event.keyCode == 77) {
+    //     game.muteGame();
+    //   }
+    // });
   };
 
   Game.FPS = 16;
@@ -57,7 +57,6 @@
         this.meow.currentTime = 0;
         var game = this;
         this.userInput = '';
-        key('enter', function() { game.restart(); });
         var highscores;
         $.ajax({
           type: "GET",
@@ -78,11 +77,12 @@
   
   Game.prototype.handleScores = function() {
     var game = this;
+    var keys = key;
+    var highScoreKeys = 'a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z,backspace';
     
     if (this.isHighScore()) {
       this.deathMessage("You got a high score!");
-      key.unbind('a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z,backspace');
-      key('a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z,backspace',
+      key(highScoreKeys,
            function(event, handler) {
              event.preventDefault();
              game.inputInitial(handler.shortcut);
@@ -90,6 +90,13 @@
     } else {
       this.deathMessage("You've been overwhelmed by grumpiness!");
     }
+    
+    key('enter', function() { 
+      highScoreKeys.split(",").forEach(function (letter) {
+        key.unbind(letter);
+      });
+      game.restart();
+    });
     
     // $.ajax({
     //   url: "/highscores/",
@@ -322,6 +329,9 @@
 
   Game.prototype.start = function() {
     key.unbind('enter');
+    key('m', function (event, handler) {
+      game.muteGame();
+    });
     var ctx = this.ctx
     ctx.fillText("Music", Game.DIM_X - 200, 60);
     var game = this;
