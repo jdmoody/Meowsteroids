@@ -61,10 +61,10 @@
     this.meow.pause();
     this.meow.currentTime = 0;
     this.userInput = '';
-    this.getHighScores();
+    this.getHighScores(true);
   };
   
-  Game.prototype.getHighScores = function () {
+  Game.prototype.getHighScores = function (handleScores) {
     var game = this;
     $.ajax({
       type: "GET",
@@ -72,7 +72,9 @@
       url: "/highscores/",
       success: function (data) {
         game.highScores = data;
-        game.handleScores();
+        if (handleScores === true) {
+          game.handleScores(); 
+        }
         game.showHighScores();
       }
     });
@@ -96,17 +98,24 @@
           key.unbind(letter);
         });
         
-        $.ajax({
-          url: "/highscores/",
-          type: "POST",
-          data: {
-            initials: game.userInput,
-            score: game.points
-          },
-          complete: function () {
-            game.getHighScores();
-          }
-        });
+        if (game.userInput.length >= 3) {
+          $.ajax({
+            url: "/highscores/",
+            type: "POST",
+            data: {
+              initials: game.userInput,
+              score: game.points
+            },
+            complete: function () {
+              game.getHighScores(false);
+              game.deathMessage(false);
+              key.unbind('enter');
+              key('enter', function () {
+                game.restart();
+              });
+            }
+          });
+        }
       });
     } else {
       this.deathMessage(false);
@@ -117,8 +126,6 @@
         game.restart();
       });
     }
-    
-    // this.showHighScores();
   };
   
   Game.prototype.showHighScores = function () {
@@ -130,21 +137,24 @@
     this.ctx.font = '16px Atari';
     
     for (var i = 0; i < 5; i++) {
-
-      initialsLeft = this.highScores[i].initials;
-      scoreLeft = this.highScores[i].score;
-      this.ctx.fillText(" " + (i + 1) + " : " + initialsLeft + " - " + scoreLeft, 
-                        Game.DIM_X/2 - 300, Game.DIM_Y/2 - 220 + i * 25);
+      initialsLeft = (this.highScores[i].initials || "   ");
+      scoreLeft = (this.highScores[i].score || " ");
+      if (this.highScores[i].score !== 0) {
+        this.ctx.fillText(" " + (i + 1) + " : " + initialsLeft + " - " + scoreLeft, 
+                          Game.DIM_X/2 - 300, Game.DIM_Y/2 - 220 + i * 25);
+      }
                         
-      initialsRight = this.highScores[i + 5].initials;                  
-      scoreRight = this.highScores[i + 5].score;
+      initialsRight = (this.highScores[i + 5].initials || "   ");                  
+      scoreRight = (this.highScores[i + 5].score || " ");
       if (i === 4) {
         rankRight = "10";
       } else {
         rankRight = " " + (i + 6);
       }
-      this.ctx.fillText(rankRight + " : " + initialsRight + " - " + scoreRight,
-                        Game.DIM_X/2 + 15, Game.DIM_Y/2 - 220 + i * 25);
+      if (this.highScores[i + 5].score !== 0) {
+        this.ctx.fillText(rankRight + " : " + initialsRight + " - " + scoreRight,
+                          Game.DIM_X/2 + 15, Game.DIM_Y/2 - 220 + i * 25);
+      }
     }
   };
   
@@ -165,9 +175,9 @@
       inputText += (i !== 2) ? ' ' : '';
     }
     this.ctx.fillStyle = "rgba(200, 200, 200, 1)";
-    this.ctx.fillRect(Game.DIM_X/2 - 70, Game.DIM_Y/2 + 100, 100, 50);
+    this.ctx.fillRect(Game.DIM_X/2 - 70, Game.DIM_Y/2 + 50, 100, 50);
     this.ctx.fillStyle = "#111111";
-    this.ctx.fillText(inputText, Game.DIM_X/2 - 60, Game.DIM_Y/2 + 125);
+    this.ctx.fillText(inputText, Game.DIM_X/2 - 60, Game.DIM_Y/2 + 80);
   };
   
   Game.prototype.isHighScore = function() {
@@ -183,7 +193,7 @@
     var msg;
     var tryAgain;
     this.ctx.fillStyle = "rgba(200, 200, 200, 1)";
-    this.ctx.fillRect(Game.DIM_X/2 - 380, Game.DIM_Y/2 - 25, 710, 60);
+    this.ctx.fillRect(Game.DIM_X/2 - 380, Game.DIM_Y/2 - 25, 710, 150);
     
     this.ctx.fillStyle = "black";
     this.ctx.font = '16px Atari';
@@ -191,13 +201,13 @@
     if (topScore === true) {
       msg = "You got a high score!"
       tryAgain = "Type in your initials and press enter!"
-      this.ctx.fillText(msg, Game.DIM_X/2 - 200, Game.DIM_Y/2);
-      this.ctx.fillText(tryAgain, Game.DIM_X/2 - 330, Game.DIM_Y/2 + 25) 
+      this.ctx.fillText(msg, Game.DIM_X/2 - 200, Game.DIM_Y/2 + 30);
+      this.ctx.fillText(tryAgain, Game.DIM_X/2 - 330, Game.DIM_Y/2 + 50) 
     } else {
       msg = "You've been overwhelmed by grumpiness!";
       tryAgain = "(Press Enter to try again)";
-      this.ctx.fillText(msg, Game.DIM_X/2 - 325, Game.DIM_Y/2);
-      this.ctx.fillText(tryAgain, Game.DIM_X/2 - 230, Game.DIM_Y/2 + 25) 
+      this.ctx.fillText(msg, Game.DIM_X/2 - 325, Game.DIM_Y/2 + 50);
+      this.ctx.fillText(tryAgain, Game.DIM_X/2 - 230, Game.DIM_Y/2 + 70) 
     }
   };
   
