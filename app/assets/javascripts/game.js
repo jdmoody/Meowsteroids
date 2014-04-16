@@ -16,11 +16,6 @@
     this.level = 0;
     this.muted = false
     game = this;
-    // $('body').on('keydown', function(event) {
-    //   if (event.keyCode == 77) {
-    //     game.muteGame();
-    //   }
-    // });
   };
 
   Game.FPS = 16;
@@ -51,22 +46,7 @@
   Game.prototype.checkCollisions = function() {
     for(var i = 0; i < this.asteroids.length; i++){
       if (this.ship.isCollidedWith(this.asteroids[i])) {
-        this.timer = Date.now() - this.timer;
-        this.stop();
-        this.meow.pause();
-        this.meow.currentTime = 0;
-        var game = this;
-        this.userInput = '';
-        var highscores;
-        $.ajax({
-          type: "GET",
-          dataType: "json",
-          url: "/highscores/",
-          success: function (data) {
-            game.highScores = data;
-            game.handleScores();
-          }
-        });
+        this.endRun();
       }
     };
     if (this.powerup && this.ship.isCollidedWith(this.powerup)) {
@@ -75,41 +55,97 @@
     }
   };
   
+  Game.prototype.endRun = function () {
+    this.timer = Date.now() - this.timer;
+    this.stop();
+    this.meow.pause();
+    this.meow.currentTime = 0;
+    this.userInput = '';
+    this.getHighScores();
+  };
+  
+  Game.prototype.getHighScores = function () {
+    var game = this;
+    $.ajax({
+      type: "GET",
+      dataType: "json",
+      url: "/highscores/",
+      success: function (data) {
+        game.highScores = data;
+        game.handleScores();
+        game.showHighScores();
+      }
+    });
+  };
+  
   Game.prototype.handleScores = function() {
     var game = this;
     var keys = key;
     var highScoreKeys = 'a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z,backspace';
     
     if (this.isHighScore()) {
-      this.deathMessage("You got a high score!");
+      this.deathMessage(true);
+      this.inputInitial("backspace");
       key(highScoreKeys,
            function(event, handler) {
              event.preventDefault();
              game.inputInitial(handler.shortcut);
       });
+      key('enter', function () {
+        highScoreKeys.split(",").forEach(function (letter) {
+          key.unbind(letter);
+        });
+        
+        $.ajax({
+          url: "/highscores/",
+          type: "POST",
+          data: {
+            initials: game.userInput,
+            score: game.points
+          },
+          complete: function () {
+            game.getHighScores();
+          }
+        });
+      });
     } else {
-      this.deathMessage("You've been overwhelmed by grumpiness!");
+      this.deathMessage(false);
+      key('enter', function() { 
+        highScoreKeys.split(",").forEach(function (letter) {
+          key.unbind(letter);
+        });
+        game.restart();
+      });
     }
     
-    key('enter', function() { 
-      highScoreKeys.split(",").forEach(function (letter) {
-        key.unbind(letter);
-      });
-      game.restart();
-    });
+    // this.showHighScores();
+  };
+  
+  Game.prototype.showHighScores = function () {
+    this.ctx.fillStyle = "rgba(200, 200, 200, 1)";
+    this.ctx.fillRect(Game.DIM_X/2 - 330, Game.DIM_Y/2 - 300, 600, 200);
+    this.ctx.fillStyle = "black";
+    this.ctx.font = '20px Atari';
+    this.ctx.fillText("Most Valiant Cats", Game.DIM_X/2 - 210, Game.DIM_Y/2 - 260);
+    this.ctx.font = '16px Atari';
     
-    // $.ajax({
-    //   url: "/highscores/",
-    //   type: "POST",
-    //   data: {
-    //     initials: input.value(),
-    //     score: game.points
-    //   },
-    //   complete: function () {
-    //     
-    //   }
-    
-    
+    for (var i = 0; i < 5; i++) {
+
+      initialsLeft = this.highScores[i].initials;
+      scoreLeft = this.highScores[i].score;
+      this.ctx.fillText(" " + (i + 1) + " : " + initialsLeft + " - " + scoreLeft, 
+                        Game.DIM_X/2 - 300, Game.DIM_Y/2 - 220 + i * 25);
+                        
+      initialsRight = this.highScores[i + 5].initials;                  
+      scoreRight = this.highScores[i + 5].score;
+      if (i === 4) {
+        rankRight = "10";
+      } else {
+        rankRight = " " + (i + 6);
+      }
+      this.ctx.fillText(rankRight + " : " + initialsRight + " - " + scoreRight,
+                        Game.DIM_X/2 + 15, Game.DIM_Y/2 - 220 + i * 25);
+    }
   };
   
   Game.prototype.inputInitial = function (keyPressed) {
@@ -128,10 +164,10 @@
       inputText += (this.userInput[i]) ? this.userInput[i] : '_';
       inputText += (i !== 2) ? ' ' : '';
     }
-    this.ctx.fillStyle = "#FFFFFF"
-    this.ctx.fillRect(Game.DIM_X/2, Game.DIM_Y/2 + 155, 100, 50)
-    this.ctx.fillStyle = "#111111"
-    this.ctx.fillText(inputText, Game.DIM_X/2, Game.DIM_Y/2 + 180);
+    this.ctx.fillStyle = "rgba(200, 200, 200, 1)";
+    this.ctx.fillRect(Game.DIM_X/2 - 70, Game.DIM_Y/2 + 100, 100, 50);
+    this.ctx.fillStyle = "#111111";
+    this.ctx.fillText(inputText, Game.DIM_X/2 - 60, Game.DIM_Y/2 + 125);
   };
   
   Game.prototype.isHighScore = function() {
@@ -143,13 +179,27 @@
     return false;
   };
   
-  Game.prototype.deathMessage = function(msg) {
-    var tryAgain = "(Press Enter to try again)";
+  Game.prototype.deathMessage = function(topScore) {
+    var msg;
+    var tryAgain;
+    this.ctx.fillStyle = "rgba(200, 200, 200, 1)";
+    this.ctx.fillRect(Game.DIM_X/2 - 380, Game.DIM_Y/2 - 25, 710, 60);
+    
     this.ctx.fillStyle = "black";
     this.ctx.font = '16px Atari';
-    this.ctx.fillText(msg, Game.DIM_X/2 - 325, Game.DIM_Y/2);
-    this.ctx.fillText(tryAgain, Game.DIM_X/2 - 250, Game.DIM_Y/2 + 25) 
-  }
+    
+    if (topScore === true) {
+      msg = "You got a high score!"
+      tryAgain = "Type in your initials and press enter!"
+      this.ctx.fillText(msg, Game.DIM_X/2 - 200, Game.DIM_Y/2);
+      this.ctx.fillText(tryAgain, Game.DIM_X/2 - 330, Game.DIM_Y/2 + 25) 
+    } else {
+      msg = "You've been overwhelmed by grumpiness!";
+      tryAgain = "(Press Enter to try again)";
+      this.ctx.fillText(msg, Game.DIM_X/2 - 325, Game.DIM_Y/2);
+      this.ctx.fillText(tryAgain, Game.DIM_X/2 - 230, Game.DIM_Y/2 + 25) 
+    }
+  };
   
   Game.prototype.restart = function() {
     this.stop();
@@ -301,7 +351,7 @@
   
   Game.prototype.startMeow = function() {
     this.meow = document.getElementById("meow");
-    this.meow.volume = 0.25;
+    this.meow.volume = 0.05;
     this.meow.play();
   };
   
@@ -315,17 +365,12 @@
       game.ctx.font = '25px Atari';
       game.ctx.fillText("Welcome to Meowsteroids!", Game.DIM_X/2 - 325, Game.DIM_Y/2);
       game.ctx.fillText("Press Enter to Play", Game.DIM_X/2 - 270, Game.DIM_Y/2 + 40);
-      // game.demo();
+
       key('enter', function() { 
         game.start(); 
-        // game.stopDemo();
       });
     }
   };
-  
-  Game.prototype.demo = function () {
-    
-  }
 
   Game.prototype.start = function() {
     key.unbind('enter');
