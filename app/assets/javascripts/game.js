@@ -1,4 +1,4 @@
-(function(root){
+(function(root) {
   var Asteroids = root.Asteroids = (root.Asteroids || {});
 
   var Game = Asteroids.Game = function(canvasEl) {
@@ -14,7 +14,8 @@
     this.timer = Date.now();
     this.points = 0;
     this.level = 0;
-    this.muted = false
+    this.muted = false;
+    this.audioPlayer = new Asteroids.AudioPlayer();
     game = this;
   };
 
@@ -40,7 +41,7 @@
     if(key.isPressed("up")) this.ship.power(0.15);
     if(key.isPressed("left")) this.ship.turn(-0.75);
     if(key.isPressed("right")) this.ship.turn(0.75);
-    if(key.isPressed("space")) this.ship.fireBullet();
+    if(key.isPressed("space")) this.ship.fireBullet(this.audioPlayer);
   }
 
   Game.prototype.checkCollisions = function() {
@@ -317,7 +318,7 @@
     ctx.fillStyle = "black";
     ctx.font = '25px Atari';
     
-    if (this.muted) {
+    if (this.audioPlayer.muted) {
       ctx.fillText("Un(m)ute", Game.DIM_X - 200, 30);
       ctx.fillText("Music", Game.DIM_X - 150, 60);
     } else {
@@ -327,15 +328,15 @@
   };
   
   Game.prototype.muteGame = function () {
-    var game = this;
-    $('audio').each(function() {
-      if (game.muted) {
-        this.muted = false;
-      } else {
-        this.muted = true;
-      }
-    });
-    this.muted = !this.muted;
+    // var game = this;
+    // $('audio').each(function() {
+    //   if (game.muted) {
+    //     this.muted = false;
+    //   } else {
+    //     this.muted = true;
+    //   }
+    // });
+    this.audioPlayer.muted = !this.audioPlayer.muted;
   };
   
   Game.prototype.incrementLevel = function() {

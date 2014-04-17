@@ -35,14 +35,17 @@
     this.direction += dir / 5;
   };
 
-  Ship.prototype.fireBullet = function() {
+  Ship.prototype.fireBullet = function(audioPlayer) {
     if (((Date.now() - this.recharge) > 200) || this.hyperBullets) {
       this.recharge = Date.now();
       var bullet = new Asteroids.Bullet(this.pos, this.direction);
       this.bullets.push(bullet);
-      var laser = new Audio("audios/pewpew.wav");
-      laser.volume = 0.05;
-      laser.play();
+      
+      audioPlayer.playBulletSound();
+      
+      // var laser = new Audio("audios/pewpew.wav");
+      // laser.volume = 0.05;
+      // laser.play();
     }
   };
 
