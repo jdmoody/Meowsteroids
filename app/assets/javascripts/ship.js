@@ -42,10 +42,6 @@
       this.bullets.push(bullet);
       
       audioPlayer.playBulletSound();
-      
-      // var laser = new Audio("audios/pewpew.wav");
-      // laser.volume = 0.05;
-      // laser.play();
     }
   };
 

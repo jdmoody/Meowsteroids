@@ -59,8 +59,10 @@
   Game.prototype.endRun = function () {
     this.timer = Date.now() - this.timer;
     this.stop();
-    this.meow.pause();
-    this.meow.currentTime = 0;
+    // this.meow.pause();
+    // this.meow.currentTime = 0;
+    this.audioPlayer.pauseMusic();
+    this.audioPlayer.restartMusic();
     this.userInput = '';
     this.getHighScores(true);
   };
@@ -215,7 +217,7 @@
   Game.prototype.restart = function() {
     this.stop();
     key.unbind('enter');
-    this.meow.pause();
+    this.audioPlayer.pauseMusic();
     this.ship = new Asteroids.Ship();
     this.asteroids = this.addAsteroids(5);
     this.timer = Date.now();
@@ -228,9 +230,7 @@
     for(var i = 0; i < this.asteroids.length; i++) {
       if (this.asteroids[i].delete === true) {
         this.points++;
-        var boom = new Audio("audios/explosion.wav");
-        boom.volume = 0.20;
-        boom.play();
+        this.audioPlayer.playExplosion();
         var oldAst = this.asteroids.splice(i, 1)[0];
         oldAst.makeBabies(this);
       }
@@ -256,9 +256,7 @@
   
   Game.prototype.activatePowerup = function () {
     var game = this;
-    var bloop = new Audio("audios/bloop.wav");
-    bloop.volume = 0.5;
-    bloop.play();
+    this.audioPlayer.playPowerupSound();
     this.ship.hyperBullets = true;
     setTimeout(function () {
       game.ship.hyperBullets = false;
@@ -320,23 +318,14 @@
     
     if (this.audioPlayer.muted) {
       ctx.fillText("Un(m)ute", Game.DIM_X - 200, 30);
-      ctx.fillText("Music", Game.DIM_X - 150, 60);
     } else {
       ctx.fillText("(M)ute", Game.DIM_X - 175, 30);
-      ctx.fillText("Music", Game.DIM_X - 150, 60);
     }
   };
   
   Game.prototype.muteGame = function () {
-    // var game = this;
-    // $('audio').each(function() {
-    //   if (game.muted) {
-    //     this.muted = false;
-    //   } else {
-    //     this.muted = true;
-    //   }
-    // });
     this.audioPlayer.muted = !this.audioPlayer.muted;
+    this.audioPlayer.muteMusic();
   };
   
   Game.prototype.incrementLevel = function() {
@@ -358,12 +347,6 @@
     this.addPowerup();
     this.checkCollisions();
     this.checkKeys();
-  };
-  
-  Game.prototype.startMeow = function() {
-    this.meow = document.getElementById("meow");
-    this.meow.volume = 0.05;
-    this.meow.play();
   };
   
   Game.prototype.run = function() {
@@ -389,12 +372,11 @@
       game.muteGame();
     });
     var ctx = this.ctx
-    ctx.fillText("Music", Game.DIM_X - 200, 60);
     var game = this;
     this.game_timer = window.setInterval(function () {
       game.step(ctx);
     }, Game.FPS);
-    this.startMeow();
+    this.audioPlayer.playMusic();
   };
 
   Game.prototype.stop = function() {
