@@ -10,3 +10,7 @@ Try to make the world a better place by firing Cheezburgers (Bullets) at the Gru
 
 The Left and Right arrow keys rotate the ship. The Up arrow key propels the Nyancat forward.
 Use spacebar to shoot. Don't get hit by the Meowsteroids!
+
+
+## TODO:
+Migrate all UI code into new file using Module pattern to cleam up game.js file
