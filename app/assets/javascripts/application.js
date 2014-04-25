@@ -19,6 +19,7 @@
 //= require asteroid
 //= require ship
 //= require bullet
+//= require rainbow
 //= require explosion
 //= require powerup
 //= require game

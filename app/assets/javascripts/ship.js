@@ -1,4 +1,4 @@
-(function(root){
+(function(root) {
   var Asteroids = root.Asteroids = (root.Asteroids || {});
 
   var Ship = Asteroids.Ship = function () {
@@ -10,6 +10,8 @@
     this.radius = 10;
     this.bullets = [];
     this.hyperBullets = false;
+    
+    this.rainbows = [];
   };
 
   Asteroids.inherits(Ship, Asteroids.MovingObject);
@@ -42,6 +44,17 @@
       this.bullets.push(bullet);
       
       audioPlayer.playBulletSound();
+    }
+  };
+  
+  Ship.prototype.createRainbow = function () {
+    if (Math.abs(this.vel[0]) > 0 || Math.abs(this.vel[1]) > 0) {
+      var rainbow = new Asteroids.Rainbow(this.pos, this.vel);
+      this.rainbows.push(rainbow);
+      var ship = this;
+      window.setTimeout(function () {
+        ship.rainbows.shift();
+      }, 2000);
     }
   };
 

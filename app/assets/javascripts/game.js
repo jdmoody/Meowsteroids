@@ -10,7 +10,7 @@
     canvasEl.width = Game.DIM_X;
     canvasEl.height = Game.DIM_Y - 5;
     this.ship = new Asteroids.Ship();
-    this.asteroids = this.addAsteroids(5);
+    this.asteroids = this.addAsteroids(1);
     this.timer = Date.now();
     this.points = 0;
     this.level = 0;
@@ -274,8 +274,12 @@
       }
     });
 
-    this.ship.bullets.forEach( function(bullet){
+    this.ship.bullets.forEach(function(bullet){
       bullet.draw(ctx);
+    });
+    
+    this.ship.rainbows.forEach(function (rainbow) {
+      rainbow.draw(ctx);
     });
 
     this.ship.draw(ctx);
@@ -291,6 +295,7 @@
     });
 
     this.ship.move(Game.DIM_Y, Game.DIM_X);
+    this.ship.createRainbow();
 
     var game = this;
     this.ship.bullets.forEach( function(bullet) {
