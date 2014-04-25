@@ -10,7 +10,7 @@
     canvasEl.width = Game.DIM_X;
     canvasEl.height = Game.DIM_Y - 5;
     this.ship = new Asteroids.Ship();
-    this.asteroids = this.addAsteroids(1);
+    this.asteroids = this.addAsteroids(4);
     this.timer = Date.now();
     this.points = 0;
     this.level = 0;
@@ -219,7 +219,7 @@
     key.unbind('enter');
     this.audioPlayer.pauseMusic();
     this.ship = new Asteroids.Ship();
-    this.asteroids = this.addAsteroids(5);
+    this.asteroids = this.addAsteroids(4);
     this.timer = Date.now();
     this.points = 0;
     this.level = 0;
