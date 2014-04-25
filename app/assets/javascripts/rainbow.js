@@ -2,10 +2,11 @@
   var Asteroids = root.Asteroids = (root.Asteroids || {});
   
   var Rainbow = Asteroids.Rainbow = function (pos, vel) {
-    rainbow_start = [pos[0] - vel[0] * 5, pos[1] - vel[1] * 5];
+    this.direction = Math.atan2(vel[0], vel[1])
+    rainbow_start = [pos[0] - Math.sin(this.direction) * 10, 
+                     pos[1] - Math.cos(this.direction) * 10];
     this.pos = rainbow_start;
     this.radius = 3;
-    this.direction = Math.atan2(vel[0], vel[1])
     this.delete = false;
   }
   
