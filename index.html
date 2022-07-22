@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script
+      src="https://code.jquery.com/jquery-3.6.0.min.js"
+      integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+      crossorigin="anonymous"
+    ></script>
+    <script src="./vendor/keymaster.js"></script>
+    <link rel="stylesheet" href="./assets/stylesheets/application.css"></style>
+
+    <script src="./src/audio_player.js" /></script>
+    <script src="./src/moving_object.js" /></script>
+    <script src="./src/asteroid.js" /></script>
+    <script src="./src/ship.js" /></script>
+    <script src="./src/bullet.js" /></script>
+    <script src="./src/rainbow.js" /></script>
+    <script src="./src/explosion.js" /></script>
+    <script src="./src/powerup.js" /></script>
+    <script src="./src/game.js" /></script>
+  </head>
+
+  <body>
+    <image src="./assets/images/nyan.png" hidden id="nyan" />
+    <image src="./assets/images/meowsteroids.png" hidden id="grump" />
+    <image src="./assets/images/ammo.png" hidden id="ammo" />
+    <image src="./assets/images/catnip.png" hidden id="catnip" />
+    <image src="./assets/images/rainbow.png" hidden id="rainbow" />
+    <image src="./assets/images/explosions/explosion-0.png" id="explosion-0" hidden />
+    <image src="./assets/images/explosions/explosion-1.png" id="explosion-1" hidden />
+    <image src="./assets/images/explosions/explosion-2.png" id="explosion-2" hidden />
+    <image src="./assets/images/explosions/explosion-3.png" id="explosion-3" hidden />
+    <image src="./assets/images/explosions/explosion-4.png" id="explosion-4" hidden />
+
+    <audio src="./assets/audios/explosion.wav"></audio>
+    <audio src="./assets/audios/bloop.wav"></audio>
+    <audio src="./assets/audios/meow.m4a" id="meow"></audio>
+    <audio src="./assets/audios/pewpew.wav"></audio>
+
+    <div style="font-family: Atari">
+      <canvas id="canvas"></canvas>
+      <script>
+        new Asteroids.Game(canvas).run();
+      </script>
+    </div>
+  </body>
+</html>
